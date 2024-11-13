@@ -70,5 +70,5 @@ jobs:
         with:
           files: dist/main.exe
           # 根据当前日期动态生成 tag_name，格式如 v20241113（示例日期格式，可按需调整）
-          tag_name: v$(TZ=Asia/Shanghai date +%Y_%m_%d)
+          tag_name: ${{ github.event.release.tag_name }}
           release_name: "GetQzonehistory"
