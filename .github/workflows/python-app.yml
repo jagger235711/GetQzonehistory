@@ -35,7 +35,7 @@ jobs:
           pip install pyinstaller
       - name: Build exe with PyInstaller
         run: |
-          pyinstaller -w -F --add-data "fetch_all_message.py;." --add-data "util/;util" --add-data "resource/;resource" main.py
+          pyinstaller -w -F --add-data "fetch_all_message.py:." --add-data "util:util" --add-data "resource:resource" main.py
       - name: 输出项目目录下文件树
         run: |
           tree -L 5
