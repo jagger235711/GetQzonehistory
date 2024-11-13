@@ -39,11 +39,11 @@ jobs:
       #     pytest
       - name: Build exe with PyInstaller
         run: |
-          pyinstaller --onefile main.py
+          pyinstaller --distpath dist qzone.exe
       - name: Create GitHub release
         uses: softprops/action-gh-release@master
         with:
-          files: dist/main.exe
+          files: dist/qzone.exe
           tag_name: v1.0.0
           release_name: "Initial release"
           body: "This is the initial release of my Python application."
