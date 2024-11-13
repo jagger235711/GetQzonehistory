@@ -59,7 +59,7 @@ jobs:
       - name: 输出项目目录下文件树
         run: |
           try {
-            tree -L 5
+            tree 
           } catch {
             Write-Host "执行 tree 命令出现问题，可能 tree 命令未安装或其他原因，请检查。"
           }
