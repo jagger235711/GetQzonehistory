@@ -1,8 +1,7 @@
-# This workflow will install Python dependencies, run tests, lint, and build an exe with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
+# 工作流名称，用于在 GitHub Actions 界面中标识该工作流
 name: Python application
 
+# 定义工作流的触发条件
 on:
   push:
     branches: ["main"]
@@ -12,20 +11,31 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
+      # 步骤 1：检出代码仓库到工作流运行环境中
       - uses: actions/checkout@v4
+
+      # 步骤 2：设置 Python 3.10 环境
       - name: Set up Python 3.10
         uses: actions/setup-python@v3
         with:
           python-version: "3.10"
+
+      # 步骤 3：安装项目依赖及 PyInstaller 打包工具
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        # 仅当缓存未命中时（即之前没有缓存可用）才执行安装操作，提高效率
+        if: steps.cache.outputs.cache-hit!= 'true'
         run: |
+          # 升级 pip 到最新版本，确保依赖安装的稳定性和兼容性
           python -m pip install --upgrade pip
+          # 从阿里云镜像源安装 requirements.txt 中列出的项目依赖，加快下载速度
           pip install  -i https://mirrors.aliyun.com/pypi/simple/ -r requirements.txt
+          # 安装 PyInstaller，用于后续将 Python 项目打包成可执行文件
           pip install pyinstaller
+
+      # 步骤 4：缓存 pip 依赖，下次运行时若依赖未变可直接使用缓存，节省安装时间
       - name: Cache pip
         uses: actions/cache@v3
         with:
@@ -33,15 +43,32 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
+      # 步骤 5：使用 PyInstaller 打包项目为可执行文件
       - name: Build exe with PyInstaller
         run: |
+          # 使用 PyInstaller 进行打包，添加相关参数确保依赖库正确打包
+          # -w：去除命令行窗口，生成无控制台的可执行文件（如果适用）
+          # -F：生成单个可执行文件，而非包含多个文件的目录结构
+          # --add-data：添加项目中的额外数据文件或目录到打包文件中
+          # --hidden-import：指定可能未被自动检测到的需要隐藏导入的模块
+          # --collect-all：收集特定模块及其相关的所有文件（此处针对 msvcrt 和 user32 进行处理）
           pyinstaller -w -F --add-data "fetch_all_message.py:." --add-data "util:util" --add-data "resource:resource" --hidden-import msvcrt --hidden-import user32 --collect-all msvcrt --collect-all user32 main.py
+
+      # 步骤 6：输出项目目录下文件树结构（方便查看打包后的文件情况等），此处添加异常处理
       - name: 输出项目目录下文件树
         run: |
-          tree -L 5
+          try {
+            tree -L 5
+          } catch {
+            Write-Host "执行 tree 命令出现问题，可能 tree 命令未安装或其他原因，请检查。"
+          }
+
+      # 步骤 7：创建 GitHub 发布版本并上传打包后的可执行文件
       - name: Create GitHub release
         uses: softprops/action-gh-release@master
         with:
           files: dist/main.exe
+          # 根据当前日期动态生成 tag_name，格式如 v20241113（示例日期格式，可按需调整）
           tag_name: v$(date +%Y%m%d)
           release_name: "GetQzonehistory"
