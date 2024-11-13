@@ -58,12 +58,11 @@ jobs:
       # 步骤 6：输出项目目录下文件树结构（方便查看打包后的文件情况等），此处添加异常处理
       - name: 输出项目目录下文件树
         run: |
-            tree 
+          tree
       # 步骤 7：创建 GitHub 发布版本并上传打包后的可执行文件
       - name: Create GitHub release
         uses: softprops/action-gh-release@master
         with:
           files: dist/main.exe
-          # 根据当前日期动态生成 tag_name，格式如 v20241113（示例日期格式，可按需调整）
-          tag_name: ${{ github.event.release.tag_name }}
+          tag_name: ${{ github.ref_name }}-${{ format('{0:%Y%m%d%H%M%S}', github.event.push.head_commit.timestamp) }}
           release_name: "GetQzonehistory"
