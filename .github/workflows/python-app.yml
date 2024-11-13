@@ -43,3 +43,10 @@ jobs:
       - name: Build exe with PyInstaller
         run: |
           pyinstaller --onefile main.py
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@master
+        with:
+          files: dist/main.exe
+          tag_name: v1.0.0
+          release_name: "Initial release"
+          body: "This is the initial release of my Python application."
