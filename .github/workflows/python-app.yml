@@ -46,7 +46,7 @@ jobs:
       - name: Create GitHub release
         uses: softprops/action-gh-release@master
         with:
-          files: dist/qzone.exe
-          tag_name: v1.0.0
+          files: dist/main
+          tag_name: $(date +'%Y-%m-%d-%H-%M-%S')
           release_name: "Initial release"
           body: "This is the initial release of my Python application."
