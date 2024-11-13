@@ -58,12 +58,7 @@ jobs:
       # 步骤 6：输出项目目录下文件树结构（方便查看打包后的文件情况等），此处添加异常处理
       - name: 输出项目目录下文件树
         run: |
-          try {
             tree 
-          } catch {
-            Write-Host "执行 tree 命令出现问题，可能 tree 命令未安装或其他原因，请检查。"
-          }
-
       # 步骤 7：创建 GitHub 发布版本并上传打包后的可执行文件
       - name: Create GitHub release
         uses: softprops/action-gh-release@master
