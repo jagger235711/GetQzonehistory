@@ -39,7 +39,10 @@ jobs:
       #     pytest
       - name: Build exe with PyInstaller
         run: |
-          pyinstaller --distpath dist qzone.exe
+          pyinstaller --onefile main.py
+      - name: 输出项目目录下文件树
+        run: |
+          tree -L 5
       - name: Create GitHub release
         uses: softprops/action-gh-release@master
         with:
