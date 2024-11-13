@@ -35,14 +35,14 @@ jobs:
             ${{ runner.os }}-pip-
       - name: Build exe with PyInstaller
         run: |
-          pyinstaller -w -F --add-data "fetch_all_message.py:." --add-data "util:util" --add-data "resource:resource" main.py
+          pyinstaller -w -F --add-data "fetch_all_message.py:." --add-data "util:util" --add-data "resource:resource" --hidden - import msvcrt --hidden - import user32 --collect - all msvcrt --collect - all user32 main.py
       - name: 输出项目目录下文件树
         run: |
           tree -L 5
       - name: Create GitHub release
         uses: softprops/action-gh-release@master
         with:
-          files: dist/main
+          files: dist/main.exe
           tag_name: v1.0.0
           release_name: "Initial release"
           body: "This is the initial release of my Python application."
